@@ -44,7 +44,7 @@ jobs:
             target_os: windows,
             tag: py39,
             python_version: 3.9.6
-    runs-on: ${{ matrix.config.os }} 
+    runs-on: ${{ matrix.os }} 
     steps:
     - uses: actions/checkout@v2
     - name: Build the Docker image
