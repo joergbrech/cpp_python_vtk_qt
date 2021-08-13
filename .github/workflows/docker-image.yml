@@ -48,7 +48,11 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build the Docker image
+      env: # Set the secret as an input
+        docker_token: ${{ secrets.DOCKER_TOKEN }}
       run: |
         cp requirements.txt ${{ matrix.target_os }}/requirements.txt
+        docker login -u joergbrech -p ${{ env.docker_token }}
         docker build --build-arg python_version=${{ matrix.python_version}} --tag joergbrech/cpp_python_vtk_qt-${{ matrix.target_os }}:${{ matrix.tag }} ${{ matrix.target_os }}
+        docker push joergbrech/cpp_python_vtk_qt-${{ matrix.target_os }}:${{ matrix.tag }}
         
