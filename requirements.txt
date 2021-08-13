@@ -1,0 +1,17 @@
+bump2version
+wheel
+watchdog==0.9.0
+flake8==3.7.8
+coverage
+Sphinx==1.8.5
+twine
+Click==7.0
+PyQt5==5.14.1
+pytest==4.6.5
+pytest-runner==5.1
+numpy
+ipython
+pytest-coverage
+sphinx-rtd-theme
+graphviz
+nbsphinx
