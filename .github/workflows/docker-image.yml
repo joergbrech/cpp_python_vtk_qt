@@ -12,52 +12,52 @@ jobs:
       fail-fast: false
       matrix:
         config:
-        - {
-            os: ubuntu-latest
-            os_label: ubuntu
-            tag: py36
+        - { 
+            os: ubuntu-latest,
+            os_label: ubuntu,
+            tag: py36,
             python_version: 3.6
           }
         - {
-            os: ubuntu-latest
-            os_label: ubuntu
-            tag: py37
+            os: ubuntu-latest,
+            os_label: ubuntu,
+            tag: py37,
             python_version: 3.7
           }
         - {
-            os: ubuntu-latest
-            os_label: ubuntu
-            tag: py38
+            os: ubuntu-latest,
+            os_label: ubuntu,
+            tag: py38,
             python_version: 3.8
           }
         - {
-            os: ubuntu-latest
-            os_label: ubuntu
-            tag: py39
+            os: ubuntu-latest,
+            os_label: ubuntu,
+            tag: py39,
             python_version: 3.9
           }
         - {
-            os: windows-latest
-            os_label: windows
-            tag: py36
+            os: windows-latest,
+            os_label: windows,
+            tag: py36,
             python_version: 3.6.8
           }
         - {
-            os: windows-latest
-            os_label: windows
-            tag: py37
+            os: windows-latest,
+            os_label: windows,
+            tag: py37,
             python_version: 3.7.9
           }
         - {
-            os: windows-latest
-            os_label: windows
-            tag: py38
+            os: windows-latest,
+            os_label: windows,
+            tag: py38,
             python_version: 3.8.9
           }
         - {
-            os: windows-latest
-            os_label: windows
-            tag: py39
+            os: windows-latest,
+            os_label: windows,
+            tag: py39,
             python_version: 3.9.6
           }
     runs-on: ${{ matrix.config.os }} 
