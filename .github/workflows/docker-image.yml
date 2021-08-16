@@ -43,7 +43,7 @@ jobs:
           - os: windows-latest
             target_os: windows
             tag: py39
-            python_version: 3.9.6
+            python_version: 3.9.5
     runs-on: ${{ matrix.os }} 
     steps:
     - uses: actions/checkout@v2
