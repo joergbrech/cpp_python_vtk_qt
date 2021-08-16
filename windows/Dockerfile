@@ -46,7 +46,6 @@ RUN \
 		-ArgumentList @( \
 			'/quiet', \
 			'InstallAllUsers=1', \
-			'TargetDir=C:\Python3', \
 			'PrependPath=1', \
 			'Shortcuts=0', \
 			'Include_doc=0', \
