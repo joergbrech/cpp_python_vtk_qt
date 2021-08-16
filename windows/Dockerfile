@@ -17,6 +17,7 @@ COPY requirements.txt requirements.txt
 RUN choco install cmake -y; \
     choco install 7zip -y; \
     choco install ninja -y; \
+    choco install nsis -y; \
 	New-Item -ItemType directory -Path C:\Tools; \
 	[Environment]::SetEnvironmentVariable('Path', ($env:Path + ';' + $env:CMAKE_HOME + '\bin;C\Tools\;C:\Program Files\7-Zip\;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build'), [EnvironmentVariableTarget]::Machine);
 	
