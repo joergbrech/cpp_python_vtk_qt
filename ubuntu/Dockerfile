@@ -1,6 +1,6 @@
 FROM ubuntu:20.04
 MAINTAINER Jan Kleinert <jan.kleinert@dlr.de>
-LABEL Description="Ubuntu 20.04 with Qt5, VTK setup for use with pybind11, python and some dev tools"
+LABEL Description="Ubuntu 20.04 with Qt5, VTK setup for use with pybind11, miniforge and some dev tools"
 SHELL ["/bin/bash", "-c"]
 
 ARG qt_version=5.14.1
@@ -8,10 +8,9 @@ ARG python_version=3.7
 ARG vtk_version=9.0.1
 
 ENV DEBIAN_FRONTEND noninteractive
-ENV PATH=/usr/local/Qt-${qt_version}/bin:$PATH
+ENV PATH=/usr/local/Qt-${qt_version}/bin:/root/miniforge3/bin:$PATH
 ENV LIBRARY_PATH=/usr/local/lib:$LIBRARY_PATH
 ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
-ENV PYTHONPATH "${PYTHONPATH}:/usr/local/lib/python${python_version}/site-packages"
 
 COPY requirements.txt requirements.txt
 
@@ -55,28 +54,18 @@ RUN apt-get update -y && apt-get upgrade -y; \
                        libxkbcommon-dev \
                        libxkbcommon-x11-dev
     
-################
-# build Python #
-################
+###################################################
+# Install Miniforge and setup default environment #
+###################################################
 
 RUN \
-# extract the latest patch release for the given python_version
-    wget https://www.python.org/ftp/python/ && python_semvar=`grep -o "${python_version}\.[0-9]*" index.html | sort -V | tail -1` && rm index.html; \
-# download and install python
-    wget https://www.python.org/ftp/python/${python_semvar}/Python-${python_semvar}.tar.xz; \
-    tar xvf Python-${python_semvar}.tar.xz; \
-    cd Python-${python_semvar}/; \
-    ./configure --enable-optimizations; \
-    make -j28 altinstall; \
-    cd .. && rm -rf Python-${python_semvar}; \
-    update-alternatives --install /usr/bin/python python /usr/local/bin/python${python_version} 1; \
-    update-alternatives --install /usr/bin/python3 python3 /usr/local/bin/python${python_version} 1; \
-    update-alternatives --set python /usr/local/bin/python${python_version}; \
-    update-alternatives --set python3 /usr/local/bin/python${python_version}; \
-# Upgrade pip
-    curl -s https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
-    python get-pip.py --force-reinstall && \
-    rm get-pip.py && \
+    curl -L -O https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh; \
+    bash Miniforge3-Linux-x86_64.sh -b; \
+    rm Miniforge3-Linux-x86_64.sh; \
+    conda init; \
+    conda update conda; \
+# install python and some dev stuff into default environment
+    conda install python=${python_version} pip; \
     pip install -r requirements.txt
 
 #######################################
