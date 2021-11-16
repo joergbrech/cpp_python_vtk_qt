@@ -46,7 +46,7 @@ RUN \
             'S', \
             'D=%UserProfile%\Miniforge3' \
         ) \
-    ).ExitCode
+    ).ExitCode; \
     if ($exitCode -ne 0) { \
 		Write-Host ('Running minoforge installer failed with exit code: {0}' -f $exitCode); \
 		Get-ChildItem $env:TEMP | Sort-Object -Descending -Property LastWriteTime | Select-Object -First 1 | Get-Content; \
