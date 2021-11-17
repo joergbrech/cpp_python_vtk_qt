@@ -19,7 +19,7 @@ RUN choco install cmake -y; \
     choco install ninja -y; \
     choco install nsis -y; \
 	New-Item -ItemType directory -Path C:\Tools; \
-	[Environment]::SetEnvironmentVariable('Path', ($env:Path + ';' + $env:CMAKE_HOME + '\bin;C\Tools\;C:\Program Files\7-Zip\;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build'), [EnvironmentVariableTarget]::Machine);
+	[Environment]::SetEnvironmentVariable('Path', ($env:Path + ';' + $env:CMAKE_HOME + '\bin;C\Tools\;C:\Tools\Miniforge3;C:\Tools\Miniforge3\Scripts;C:\Program Files\7-Zip\;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build'), [EnvironmentVariableTarget]::Machine);
 	
 COPY activate_vc2019.ps1 C:/Tools/vcvars_ps.ps1
 
@@ -39,28 +39,29 @@ RUN \
     \
 # run the Miniforge installer
     Write-Host 'Installing ...'; \
-    $exitCode = (Start-Process Miniforge3-Windows-x86_64.exe -Wait -NoNewWindow -PassThru \
-        -ArgumentList @( \
-            'InstallationType=JustMe',  \
-            'RegisterPython=0', \
-            'S', \
-            'D=%UserProfile%\Miniforge3' \
-        ) \
-    ).ExitCode; \
+    $exitCode = (Start-Process 'Miniforge3-Windows-x86_64.exe' -Wait -NoNewWindow -PassThru \
+		-ArgumentList @( \
+			'/InstallationType=JustMe', \
+			'/RegisterPython=0', \
+			'/S', \
+			'/D=C:\Tools\Miniforge3' \
+		)\
+	).ExitCode; \
     if ($exitCode -ne 0) { \
 		Write-Host ('Running minoforge installer failed with exit code: {0}' -f $exitCode); \
 		Get-ChildItem $env:TEMP | Sort-Object -Descending -Property LastWriteTime | Select-Object -First 1 | Get-Content; \
 		exit $exitCode; \
 	} \
 	\
-# the installer updated PATH, so we should refresh our local value
+# make sure the PATH is up to date
 	$env:PATH = [Environment]::GetEnvironmentVariable('PATH', [EnvironmentVariableTarget]::Machine); \
-    Remove-Item –path Miniforge3-Windows-x86_64.exe -Force; \
+    Remove-Item –path 'Miniforge3-Windows-x86_64.exe' -Force; \
     conda init; \
+# reload the Powershell profile modified by conda init
+	. C:\Users\ContainerAdministrator\Documents\WindowsPowerShell\profile.ps1; \
     conda update conda; \
 # install python and some dev stuff into default environment
-    conda install python=${python_version} pip; \
-    pip install -r requirements.txt
+    conda install python=$env:python_version pip
 
 #######################################
 # build vtk with VTK_WRAP_PYTHON=ON   #
@@ -105,3 +106,11 @@ RUN git clone https://code.qt.io/qt/qt5.git; \
 # cleanup
     cd ..\..; \
 	Remove-Item –path qt5 -recurse -force
+	
+#############################
+# Install some python tools #
+#############################
+# This is the last step, because pip will download PyQt5 source, which requires a Qt installation.
+# So doing this as part of the Python install will error
+
+RUN pip install -r requirements.txt
